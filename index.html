@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bài thuyết trình Tin học — VẬT LÝ</title>
+<meta name="description" content="Website thuyết trình nhóm môn Tin học — chủ đề Vật lý: phòng thí nghiệm tương tác với các mô phỏng vật lý chạy ngay trên trang.">
+<meta name="theme-color" content="#050914">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ============ DESIGN TOKENS ============ */
+:root{
+  --navy-deep:#03060f;
+  --navy:#050914;
+  --navy-2:#080e20;
+  --midnight:#0b1428;
+  --cyan:#3fe0ff;
+  --cyan-dim:rgba(63,224,255,.55);
+  --cyan-faint:rgba(63,224,255,.14);
+  --blue-glow:rgba(46,120,255,.30);
+  --white:#eef4fb;
+  --white-70:rgba(238,244,251,.72);
+  --white-45:rgba(238,244,251,.45);
+  --white-25:rgba(238,244,251,.25);
+  --line:rgba(120,180,255,.14);
+  --line-strong:rgba(120,180,255,.26);
+
+  --font-display:"Space Grotesk","Be Vietnam Pro",system-ui,sans-serif;
+  --font-body:"Be Vietnam Pro","Segoe UI",system-ui,sans-serif;
+
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px;
+  --sp-5:24px; --sp-6:32px; --sp-7:48px; --sp-8:64px; --sp-9:96px;
+
+  --ease-out:cubic-bezier(.16,1,.3,1);
+  --ease-io:cubic-bezier(.65,.05,.36,1);
+  --nav-h:60px;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+}
+body{
+  background:var(--navy);
+  color:var(--white);
+  font-family:var(--font-body);
+  font-weight:300;
+  font-size:16px;
+  line-height:1.7;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+img,video,canvas,iframe{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;text-align:left}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:2px}
+
+/* ============ UTILITIES ============ */
+.wrap{width:min(1180px,calc(100% - var(--sp-6)));margin-inline:auto}
+.mono-label{
+  font-family:var(--font-display);
+  font-size:11px;font-weight:500;
+  letter-spacing:.28em;text-transform:uppercase;
+  color:var(--cyan-dim);
+}
+
+/* ============ NAV ============ */
+.nav{
+  position:fixed;inset:0 0 auto 0;height:var(--nav-h);z-index:60;
+  display:flex;align-items:center;
+  border-bottom:1px solid transparent;
+  transition:background .4s var(--ease-out),border-color .4s var(--ease-out);
+}
+.nav.is-scrolled{background:rgba(5,9,20,.92);border-bottom-color:var(--line)}
+.nav.is-scrolled .brand__mark{width:20px;height:20px}
+.nav.is-scrolled .brand{font-size:12px}
+.brand__mark,.brand{transition:width .4s var(--ease-out),height .4s var(--ease-out),font-size .4s var(--ease-out)}
+.nav__inner{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-4)}
+.brand{display:flex;align-items:center;gap:var(--sp-4);font-family:var(--font-display);font-size:13px;letter-spacing:.16em;text-transform:uppercase;font-weight:500}
+.brand__mark{width:26px;height:26px;border:1px solid var(--cyan-dim);border-radius:2px;position:relative;flex:none}
+.brand__mark::after{content:"";position:absolute;inset:6px;background:var(--cyan);border-radius:1px;opacity:.85}
+.brand__sub{color:var(--white-45);letter-spacing:.2em}
+.nav__links{display:flex;gap:var(--sp-6);align-items:center}
+.nav__link{
+  font-family:var(--font-display);font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--white-45);position:relative;padding-block:var(--sp-2);
+  transition:color .3s;
+}
+.nav__link::after{content:"";position:absolute;left:0;right:100%;bottom:0;height:1px;background:var(--cyan);transition:right .4s var(--ease-out)}
+.nav__link:hover,.nav__link:focus-visible{color:var(--white)}
+.nav__link:hover::after,.nav__link:focus-visible::after{right:0}
+
+/* ============ HERO ============ */
+.hero{position:relative;min-height:100svh;display:flex;align-items:flex-end;overflow:hidden;background:var(--navy-deep)}
+#field{position:absolute;inset:-6% 0 0 0;width:100%;height:112%;z-index:0;will-change:transform}
+.hero__scrim{
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(120% 80% at 18% 8%,rgba(46,120,255,.20),transparent 60%),
+    linear-gradient(180deg,rgba(3,6,15,.55) 0%,rgba(3,6,15,.30) 38%,rgba(3,6,15,.82) 76%,var(--navy) 100%);
+}
+.hero__content{position:relative;z-index:2;padding-block:calc(var(--nav-h) + var(--sp-9)) var(--sp-8)}
+.hero__eyebrow{display:flex;align-items:center;gap:var(--sp-3);margin-bottom:var(--sp-5)}
+.hero__eyebrow .tick{width:34px;height:1px;background:var(--cyan);flex:none}
+.hero__title{
+  font-family:var(--font-display);
+  font-size:clamp(46px,10.5vw,128px);
+  line-height:1.02;font-weight:300;letter-spacing:-.022em;
+  text-wrap:balance;
+}
+.hero__title .accent{color:var(--cyan);font-weight:500}
+.hero__title .thin{color:var(--white-45)}
+.hero__meta{
+  display:flex;flex-wrap:wrap;gap:var(--sp-3) var(--sp-7);
+  margin-top:var(--sp-6);padding-top:var(--sp-5);border-top:1px solid var(--line);
+  font-family:var(--font-display);font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--white-45);
+}
+.hero__meta strong{color:var(--white);font-weight:500}
+.hero__cta{margin-top:var(--sp-7);display:flex;flex-wrap:wrap;gap:var(--sp-4)}
+.hero__scroll{
+  position:absolute;right:var(--sp-5);bottom:var(--sp-6);z-index:2;
+  writing-mode:vertical-rl;font-family:var(--font-display);font-size:10px;
+  letter-spacing:.34em;text-transform:uppercase;color:var(--white-25);
+  display:flex;align-items:center;gap:var(--sp-3);
+}
+.hero__scroll::after{content:"";width:1px;height:56px;background:linear-gradient(180deg,var(--cyan),transparent)}
+
+/* ============ BUTTONS ============ */
+.btn{
+  display:inline-flex;align-items:center;gap:var(--sp-3);
+  padding:14px 26px;border:1px solid var(--line-strong);border-radius:2px;
+  font-family:var(--font-display);font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--white);
+  transition:border-color .35s,color .35s,transform .35s var(--ease-out),background .35s;
+  will-change:transform;
+}
+.btn svg{width:14px;height:14px;flex:none}
+.btn--solid{background:var(--cyan);color:#04121c;border-color:var(--cyan);font-weight:500}
+.btn--solid:hover{background:#7cecff;border-color:#7cecff}
+.btn--ghost:hover{border-color:var(--cyan);color:var(--cyan)}
+.btn:active{transform:translateY(1px)}
+
+/* ============ SECTION SHELL ============ */
+.section{position:relative;padding-block:clamp(var(--sp-8),12vw,var(--sp-9))}
+.section--alt{background:linear-gradient(180deg,var(--navy) 0%,var(--navy-2) 50%,var(--navy) 100%)}
+.section__head{max-width:820px;margin-bottom:var(--sp-7)}
+.section__index{font-family:var(--font-display);font-size:12px;letter-spacing:.3em;color:var(--cyan-dim);text-transform:uppercase;display:block;margin-bottom:var(--sp-4)}
+.section__title{
+  font-family:var(--font-display);font-weight:300;letter-spacing:-.02em;line-height:1.1;
+  font-size:clamp(30px,4.6vw,56px);text-wrap:balance;
+}
+.section__title em{font-style:normal;color:var(--cyan)}
+.section__lede{margin-top:var(--sp-5);color:var(--white-45);font-size:clamp(15px,1.4vw,17px);max-width:64ch}
+
+/* decorative rule above section heads */
+.section__head::before{
+  content:"";display:block;width:72px;height:1px;margin-bottom:var(--sp-5);
+  background:linear-gradient(90deg,var(--cyan),rgba(63,224,255,0));
+}
+
+/* clip wipe for titles (smoother than plain fade) */
+.wipe{clip-path:inset(0 100% 0 0);opacity:0;transition:clip-path 1.05s cubic-bezier(.16,1,.3,1),opacity .55s var(--ease-out)}
+.wipe.is-in{clip-path:inset(0 0 0 0);opacity:1}
+
+/* iframe fades in when loaded (no hard cut between labs) */
+.lab-frameWrap iframe{opacity:0;transition:opacity .55s var(--ease-out)}
+.lab-frameWrap iframe.is-in{opacity:1}
+
+/* ============ REVEAL ============ */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .85s var(--ease-out),transform .85s var(--ease-out);transition-delay:var(--d,0ms)}
+.reveal.is-in{opacity:1;transform:none}
+.reveal-img{clip-path:inset(10% 0 10% 0);opacity:.35;transition:clip-path 1.25s var(--ease-io),opacity .9s var(--ease-out)}
+.reveal-img.is-in{clip-path:inset(0 0 0 0);opacity:1}
+
+/* ============ INTRO (editorial long-form) ============ */
+.intro{position:relative;padding-block:clamp(var(--sp-8),12vw,var(--sp-9))}
+.intro__lead{
+  max-width:820px;
+}
+.intro__lead p{
+  color:var(--white-70);
+  font-size:clamp(16px,1.8vw,20px);
+  line-height:1.8;
+  margin-top:var(--sp-5);
+  text-wrap:pretty;
+}
+.intro__lead p:first-child{margin-top:var(--sp-6)}
+.intro__lead p strong{color:var(--white);font-weight:500}
+.pillars{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp-5);
+  margin-top:clamp(var(--sp-7),7vw,var(--sp-8));
+  border-top:1px solid var(--line);padding-top:clamp(var(--sp-6),6vw,var(--sp-8));
+}
+.pillar{position:relative;padding-right:var(--sp-4)}
+.pillar__k{font-family:var(--font-display);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--cyan-dim);display:block;margin-bottom:var(--sp-3)}
+.pillar__name{font-family:var(--font-display);font-weight:300;font-size:clamp(20px,2.4vw,28px);line-height:1.15;letter-spacing:-.015em;margin-bottom:var(--sp-3)}
+.pillar__txt{color:var(--white-45);font-size:14.5px;line-height:1.7;max-width:36ch}
+.pillar__eq{
+  margin-top:var(--sp-4);font-family:var(--font-display);font-size:14px;letter-spacing:.06em;color:var(--cyan);
+  padding:8px 12px;border-left:1px solid var(--cyan-faint);background:rgba(63,224,255,.04);width:max-content;max-width:100%;
+}
+.const{
+  margin-top:clamp(var(--sp-7),7vw,var(--sp-8));
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:3px;overflow:hidden;
+}
+.const__cell{background:var(--navy-2);padding:var(--sp-5);transition:background .4s var(--ease-out)}
+.const__cell:hover{background:#0c1830}
+.const__v{font-family:var(--font-display);font-weight:300;font-size:clamp(22px,2.8vw,34px);letter-spacing:-.02em;line-height:1.1;color:var(--white)}
+.const__v em{font-style:normal;color:var(--cyan)}
+.const__l{margin-top:var(--sp-2);color:var(--white-45);font-size:13px;line-height:1.55}
+.intro__outro{margin-top:clamp(var(--sp-7),7vw,var(--sp-8));display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--sp-5);border-top:1px solid var(--line);padding-top:clamp(var(--sp-6),6vw,var(--sp-8))}
+.intro__outro h3{font-family:var(--font-display);font-weight:300;font-size:clamp(22px,3vw,34px);line-height:1.15;letter-spacing:-.02em;max-width:22ch}
+
+/* ============ LAB ============ */
+.lab-layout{display:grid;grid-template-columns:minmax(280px,360px) 1fr;gap:var(--sp-6);align-items:start}
+.lab-intro{position:sticky;top:calc(var(--nav-h) + var(--sp-5))}
+.lab-intro h3{font-family:var(--font-display);font-weight:300;font-size:clamp(22px,2.6vw,30px);line-height:1.16;letter-spacing:-.015em;margin-block:var(--sp-4)}
+.lab-intro p{color:var(--white-70);font-size:15px;line-height:1.75}
+.lab-intro p+p{margin-top:var(--sp-4)}
+.lab-intro .fact{margin-top:var(--sp-5);border-left:1px solid var(--line-strong);padding-left:var(--sp-4);color:var(--white-45);font-size:13.5px;line-height:1.65}
+.lab-tabs{display:flex;flex-wrap:wrap;gap:var(--sp-2);margin-top:var(--sp-6)}
+.lab-tab{
+  display:inline-flex;align-items:center;gap:var(--sp-2);
+  padding:9px 14px;border:1px solid var(--line);border-radius:2px;
+  font-family:var(--font-display);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--white-45);
+  transition:border-color .3s,color .3s,background .3s;
+}
+.lab-tab:hover{border-color:var(--line-strong);color:var(--white)}
+.lab-tab.is-active{background:var(--cyan-faint);border-color:var(--cyan-dim);color:var(--cyan)}
+.lab-stage{position:relative;border:1px solid var(--line-strong);border-radius:3px;overflow:hidden;background:#04070f}
+.lab-stage__bar{
+  display:flex;flex-wrap:wrap;gap:var(--sp-3);align-items:center;justify-content:space-between;
+  padding:var(--sp-3) var(--sp-4);border-bottom:1px solid var(--line);
+  font-family:var(--font-display);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--white-45);
+}
+.lab-stage__bar .dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);flex:none;box-shadow:0 0 8px var(--cyan-dim)}
+.expand-btn{
+  display:inline-flex;align-items:center;gap:6px;color:var(--cyan-dim);
+  transition:color .3s;
+}
+.expand-btn:hover{color:var(--cyan)}
+.expand-btn svg{width:12px;height:12px}
+.lab-frameWrap{position:relative;aspect-ratio:16/10;background:#fff}
+.lab-frameWrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
+.lab-frameWrap__loading{
+  position:absolute;inset:0;display:grid;place-items:center;background:#04070f;
+  font-family:var(--font-display);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--white-25);
+  transition:opacity .5s var(--ease-out);
+}
+.lab-frameWrap.is-loaded .lab-frameWrap__loading{opacity:0;pointer-events:none}
+
+/* ============ LIGHTBOX (mở rộng) ============ */
+.lightbox{position:fixed;inset:0;z-index:90;display:grid;place-items:center;visibility:hidden;pointer-events:none;padding:clamp(12px,3vw,32px)}
+.lightbox.is-open{visibility:visible;pointer-events:auto}
+.lightbox__bg{position:absolute;inset:0;background:rgba(2,4,10,.88);opacity:0;transition:opacity .45s var(--ease-out)}
+.lightbox.is-open .lightbox__bg{opacity:1}
+.lightbox__panel{
+  position:relative;width:min(1500px,100%);height:min(920px,88svh);
+  display:flex;flex-direction:column;
+  background:#04070f;border:1px solid var(--line-strong);border-radius:4px;overflow:hidden;
+  transform:scale(.96) translateY(14px);opacity:0;
+  transition:transform .5s var(--ease-out),opacity .4s var(--ease-out);
+}
+.lightbox.is-open .lightbox__panel{transform:none;opacity:1}
+.lightbox__bar{
+  display:flex;flex-wrap:wrap;gap:var(--sp-3);align-items:center;justify-content:space-between;
+  padding:var(--sp-3) var(--sp-4);border-bottom:1px solid var(--line);flex:none;
+  font-family:var(--font-display);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--white-45);
+}
+.lightbox__bar .dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);flex:none;box-shadow:0 0 8px var(--cyan-dim)}
+.lightbox__close{
+  display:inline-flex;align-items:center;gap:8px;padding:9px 16px;
+  border:1px solid var(--line);border-radius:2px;color:var(--white-70);
+  font-family:var(--font-display);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  transition:border-color .3s,color .3s;
+}
+.lightbox__close:hover{border-color:var(--cyan);color:var(--cyan)}
+.lightbox__close svg{width:13px;height:13px}
+.lightbox__frame{position:relative;flex:1;background:#fff;overflow:hidden}
+.lightbox__frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
+.lightbox__frame .lab-frameWrap__loading{position:absolute}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width:1024px){
+  .lab-layout{grid-template-columns:1fr}
+  .lab-intro{position:static}
+}
+@media (max-width:768px){
+  .nav__links{gap:var(--sp-4)}
+  .hero__scroll{display:none}
+  .wrap{width:calc(100% - var(--sp-5))}
+  .lightbox{padding:10px}
+  .lightbox__panel{height:92svh}
+}
+@media (max-width:520px){
+  .hero__meta{gap:var(--sp-3) var(--sp-5)}
+  .btn{padding:13px 20px;font-size:11px}
+  .lab-frameWrap{aspect-ratio:4/3}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= NAV ================= -->
+<header class="nav" id="nav">
+  <div class="wrap nav__inner">
+    <a class="brand" href="#hero">
+      <span class="brand__mark" aria-hidden="true"></span>
+      <span>NHÓM&nbsp;<span class="brand__sub">／ VẬT LÝ</span></span>
+    </a>
+    <nav class="nav__links" aria-label="Điều hướng">
+      <a class="nav__link" href="#phong-thi-nghiem">Phòng thí nghiệm</a>
+      <a class="btn btn--solid" href="#phong-thi-nghiem" style="padding:11px 20px">Bắt đầu
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ================= SECTION 01 · HERO ================= -->
+<section class="hero" id="hero">
+  <canvas id="field" aria-hidden="true"></canvas>
+  <div class="hero__scrim" aria-hidden="true"></div>
+
+  <div class="wrap hero__content" id="heroContent">
+    <div class="hero__eyebrow reveal">
+      <span class="tick" aria-hidden="true"></span>
+      <span class="mono-label">Bài thuyết trình Tin học của nhóm</span>
+    </div>
+    <h1 class="hero__title reveal" style="--d:90ms">
+      VẬT LÝ<br>
+      <span class="accent">quanh ta</span><br>
+      <span class="thin">là một trải nghiệm.</span>
+    </h1>
+    <div class="hero__meta reveal" style="--d:200ms">
+      <span>Chủ đề　<strong>Vật lý</strong></span>
+      <span>Hình thức　<strong>Phòng thí nghiệm tương tác</strong></span>
+      <span>Nhóm　<strong>Tin học – Vật lý</strong></span>
+    </div>
+    <div class="hero__cta reveal" style="--d:300ms">
+      <a class="btn btn--solid" href="#phong-thi-nghiem">Vào phòng thí nghiệm
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
+      </a>
+      <button class="btn btn--ghost" type="button" id="ctaExpand">Mở rộng lab 01
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 4h12v12M20 4L9 15M9 9v6h6"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="hero__scroll" aria-hidden="true">Cuộn để bắt đầu</div>
+</section>
+
+<!-- ================= SECTION 02 · GIỚI THIỆU ================= -->
+<section class="section intro" id="gioi-thieu">
+  <div class="wrap">
+    <div class="section__head">
+      <span class="section__index reveal">Khái quát</span>
+      <h2 class="section__title wipe" style="--d:80ms">Vật lý học bắt đầu bằng một<br>câu hỏi rất <em>đơn giản</em></h2>
+    </div>
+
+    <div class="intro__lead">
+      <p class="reveal">Thứ quanh ta biến đổi thế nào, và vì sao. Từ quả táo rơi, tiếng sóng lan trong không khí, tia sáng uốn cong trong nước, cho đến nam châm hút mảnh sắt — tất cả đều nói cùng một ngôn ngữ: <strong>đại lượng, đơn vị và phương trình</strong>.</p>
+      <p class="reveal" style="--d:100ms">Vật lý không phải một danh sách công thức phải thuộc. Nó là cách để đặt câu hỏi cho tự nhiên, rồi để tự nhiên trả lời bằng thí nghiệm. Mỗi hiện tượng có thể đo được, mỗi dự đoán có thể kiểm tra được — đó là điểm khác biệt lớn nhất so với nhận định thông thường.</p>
+      <p class="reveal" style="--d:200ms">Nhóm chọn ba nhánh cơ bản nhất để mở đến sáu phòng thí nghiệm dưới đây: <strong>cơ học</strong> về chuyển động và năng lượng, <strong>điện từ học</strong> về dòng điện và từ trường, và <strong>quang học</strong> về ánh sáng.</p>
+    </div>
+
+    <div class="pillars">
+      <div class="pillar reveal" style="--d:0ms">
+        <span class="pillar__k">Nhánh 01</span>
+        <h3 class="pillar__name">Cơ học</h3>
+        <p class="pillar__txt">Chuyển động, lực và năng lượng. Con lắc, vật ném, vật nổi đều tuân theo cùng một hệ quả: lực gây gia tốc, gia tốc làm đổi vận tốc.</p>
+        <div class="pillar__eq">T = 2π√(L/g)</div>
+      </div>
+      <div class="pillar reveal" style="--d:100ms">
+        <span class="pillar__k">Nhánh 02</span>
+        <h3 class="pillar__name">Điện từ học</h3>
+        <p class="pillar__txt">Dòng điện sinh ra từ trường; từ trường biến thiên sinh ra dòng điện. Hai hiện tượng một lý thuyết, cùng thúc đẩy động cơ và máy phát điện.</p>
+        <div class="pillar__eq">F = B·I·L</div>
+      </div>
+      <div class="pillar reveal" style="--d:200ms">
+        <span class="pillar__k">Nhánh 03</span>
+        <h3 class="pillar__name">Quang học</h3>
+        <p class="pillar__txt">Ánh sáng truyền với vận tốc hữu hạn, gấp gọn khi vào môi trường khác, và trao đổi năng lượng theo từng gói rời rạc gọi là photon.</p>
+        <div class="pillar__eq">n₁·sinθ₁ = n₂·sinθ₂</div>
+      </div>
+    </div>
+
+    <div class="const reveal" style="--d:120ms">
+      <div class="const__cell"><div class="const__v">2,998<em>×10⁸</em></div><div class="const__l">m/s — vận tốc ánh sáng trong chân không</div></div>
+      <div class="const__cell"><div class="const__v">9,81</div><div class="const__l">m/s² — gia tốc trọng trường trên Trái Đất</div></div>
+      <div class="const__cell"><div class="const__v">6,626<em>×10⁻³⁴</em></div><div class="const__l">J·s — hằng số Planck</div></div>
+      <div class="const__cell"><div class="const__v">1,602<em>×10⁻¹⁹</em></div><div class="const__l">C — điện tích nguyên tố</div></div>
+    </div>
+
+    <div class="intro__outro reveal" style="--d:160ms">
+      <h3>Sáu phòng thí nghiệm để tự tay kiểm chứng.</h3>
+      <a class="btn btn--solid" href="#phong-thi-nghiem">Bắt đầu thí nghiệm
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SECTION 03 · PHÒNG THÍ NGHIỆM ================= -->
+<section class="section section--alt" id="phong-thi-nghiem">
+  <div class="wrap">
+    <div class="section__head">
+      <h2 class="section__title wipe" style="--d:80ms">Sáu phòng thí nghiệm, <em>thao tác</em> bằng tay</h2>
+      <p class="section__lede reveal" style="--d:160ms">Mỗi phòng thí nghiệm chạy ngay trên trang — mô phỏng đã tải sẵn vào máy, không cần mạng. Chọn phòng, ghi lại số đo, rồi kết luận.</p>
+    </div>
+
+    <div class="lab-layout">
+      <!-- INTRO -->
+      <div class="lab-intro reveal-l">
+        <span class="section__index" style="margin-bottom:var(--sp-3)" id="labTag">Lab 01 · Từ tính</span>
+        <h3 id="labName" class="wipe">Nam châm và la bàn</h3>
+        <div class="lab-intro__body" id="labBody"></div>
+
+        <div class="lab-tabs" id="labTabs" role="tablist" aria-label="Danh sách phòng thí nghiệm"></div>
+      </div>
+
+      <!-- STAGE -->
+      <div class="reveal" style="--d:120ms">
+        <div class="lab-stage">
+          <div class="lab-stage__bar">
+            <span style="display:flex;align-items:center;gap:var(--sp-2)"><span class="dot" aria-hidden="true"></span><span id="labCurrent">Nam châm và la bàn</span></span>
+            <button class="expand-btn" type="button" id="expandStage">Mở rộng
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 4h12v12M20 4L9 15M9 9v6h6"/></svg>
+            </button>
+          </div>
+          <div class="lab-frameWrap" id="frameWrap">
+            <div class="lab-frameWrap__loading" id="frameLoading">Đang tải mô phỏng…</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ================= LIGHTBOX ================= -->
+<div class="lightbox" id="lightbox" hidden>
+  <div class="lightbox__bg" data-lbclose></div>
+  <div class="lightbox__panel" role="dialog" aria-modal="true" aria-label="Phòng thí nghiệm mở rộng">
+    <div class="lightbox__bar">
+      <span style="display:flex;align-items:center;gap:var(--sp-2)"><span class="dot" aria-hidden="true"></span><span id="lbTitle">Nam châm và la bàn</span></span>
+      <button class="lightbox__close" type="button" data-lbclose>Đóng
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="lightbox__frame">
+      <div class="lab-frameWrap__loading" id="lbLoading">Đang tải mô phỏng…</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+/* ---- device capability probe: light effects auto-off on weak machines ---- */
+var FX = (function(){
+  var q = new URLSearchParams(location.search).get('fx');
+  var hasCores = (typeof navigator.hardwareConcurrency === 'number');
+  var hasMem = (typeof navigator.deviceMemory === 'number');
+  var cores = hasCores ? navigator.hardwareConcurrency : 8;
+  var mem = hasMem ? navigator.deviceMemory : 8;
+  // evidence-based: weak only when both signals are low, or RAM is clearly tiny
+  var weak = (hasCores && hasMem && cores <= 4 && mem <= 4) || (hasMem && mem <= 3);
+  var level = q === 'low' ? 'low' : (q === 'high' ? 'high' : (weak ? 'low' : 'full'));
+  return { level: level, weak: (level !== 'full'), cores: cores, mem: mem, live: false };
+})();
+window.__FX = FX;
+function dpr(){ return Math.min(window.devicePixelRatio || 1, FX.weak ? 1.25 : 2); }
+
+function fitCanvas(cv){
+  var r = cv.getBoundingClientRect();
+  var d = dpr();
+  var w = Math.max(1, Math.round(r.width * d));
+  var h = Math.max(1, Math.round(r.height * d));
+  if(cv.width !== w || cv.height !== h){ cv.width = w; cv.height = h; }
+  var ctx = cv.getContext('2d');
+  ctx.setTransform(d,0,0,d,0,0);
+  return {ctx:ctx, w:r.width, h:r.height};
+}
+
+/* ============ HERO FIELD CANVAS ============ */
+function initHeroField(){
+  var cv = document.getElementById('field');
+  if(!cv) return;
+  var ctx, W, H;
+  function resize(){ var f = fitCanvas(cv); ctx = f.ctx; W = f.w; H = f.h; }
+  resize();
+
+  var t = 0, running = true, visible = true;
+  var pointer = {x:-9999, y:-9999};
+  var src = [ {x:.14,y:.22}, {x:.86,y:.30} ];
+
+  function draw(){
+    // deep-sky base
+    var bg = ctx.createLinearGradient(0,0,0,H);
+    bg.addColorStop(0,'#03081a');
+    bg.addColorStop(.55,'#060d22');
+    bg.addColorStop(1,'#0a142c');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0,0,W,H);
+
+    // star field (twinkle)
+    for(var st=0; st<(FX_LOW?18:90); st++){
+      var stx = ((st*7919)%1000)/1000*W;
+      var sty = ((st*104729)%1000)/1000*H;
+      var tw = .5+.5*Math.sin(t*1.2 + st*1.7);
+      ctx.globalAlpha = .05 + .28*tw;
+      ctx.fillStyle = 'rgba(200,235,255,1)';
+      var sz = (st%9===0) ? 2 : 1;
+      ctx.fillRect(stx, sty, sz, sz);
+    }
+    ctx.globalAlpha = 1;
+
+    // nebula glows
+    var n1 = ctx.createRadialGradient(W*.80,H*.22,0,W*.80,H*.22,W*.44);
+    n1.addColorStop(0,'rgba(46,120,255,.17)');
+    n1.addColorStop(1,'rgba(46,120,255,0)');
+    ctx.fillStyle = n1;
+    ctx.fillRect(0,0,W,H);
+    var n2 = ctx.createRadialGradient(W*.18,H*.84,0,W*.18,H*.84,W*.38);
+    n2.addColorStop(0,'rgba(63,224,255,.11)');
+    n2.addColorStop(1,'rgba(63,224,255,0)');
+    ctx.fillStyle = n2;
+    ctx.fillRect(0,0,W,H);
+
+    var gs = Math.max(52, W/22);
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(120,180,255,0.05)';
+    ctx.beginPath();
+    for(var x = -((t*6) % gs); x < W; x += gs){ ctx.moveTo(x,0); ctx.lineTo(x,H); }
+    for(var y = 0; y < H; y += gs){ ctx.moveTo(0,y); ctx.lineTo(W,y); }
+    ctx.stroke();
+
+    for(var s=0; s<src.length; s++){
+      var sx = src[s].x*W, sy = src[s].y*H;
+      var R = Math.max(W,H)*.40;
+      var g = ctx.createRadialGradient(sx,sy,0,sx,sy,R);
+      g.addColorStop(0,'rgba(63,224,255,0.09)');
+      g.addColorStop(1,'rgba(63,224,255,0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0,0,W,H);
+    }
+
+    var lambda = 92;
+    for(var i=0;i<src.length;i++){
+      for(var k=1;k<=(FX_LOW?3:6);k++){
+        var rad = ((t*120 + k*lambda) % (lambda*6));
+        var alpha = Math.max(0, 0.14 * (1 - rad/(lambda*6)));
+        ctx.beginPath();
+        ctx.arc(src[i].x*W, src[i].y*H, rad, 0, Math.PI*2);
+        ctx.strokeStyle = 'rgba(63,224,255,' + alpha.toFixed(3) + ')';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    }
+
+    ctx.fillStyle = 'rgba(238,244,251,0.5)';
+    for(var p=0;p<16;p++){
+      var seed = p*97.13;
+      var py = H - (((seed + t*22) % (H+80)) - 40);
+      var px = (Math.sin(seed)*0.5+0.5)*W + Math.sin(t*0.6 + seed)*14;
+      var a = 0.09 + 0.26*Math.abs(Math.sin(seed*1.7 + t*0.9));
+      ctx.globalAlpha = a;
+      ctx.fillRect(px, py, 1.6, 1.6);
+    }
+    ctx.globalAlpha = 1;
+
+    if(pointer.x > 0){
+      var pr = Math.min(W,H)*0.30;
+      var pg = ctx.createRadialGradient(pointer.x,pointer.y,0,pointer.x,pointer.y,pr);
+      pg.addColorStop(0,'rgba(63,224,255,0.10)');
+      pg.addColorStop(1,'rgba(63,224,255,0)');
+      ctx.fillStyle = pg;
+      ctx.fillRect(0,0,W,H);
+      ctx.beginPath();
+      ctx.arc(pointer.x, pointer.y, 24 + 10*Math.sin(t*2.4), 0, Math.PI*2);
+      ctx.strokeStyle = 'rgba(63,224,255,0.22)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+  }
+
+  var FX_LOW = FX.weak;
+
+  // runtime watchdog: if the machine actually struggles, drop animation for real
+  var frames = 0, acc = 0, degraded = false;
+
+  function loop(){
+    if(FX_LOW || degraded){
+      if(!cv.dataset.painted){ cv.dataset.painted = '1'; draw(); }
+      return;
+    }
+    var t0 = performance.now();
+    if(running && visible && !REDUCED.matches){ t += 1/60; draw(); }
+    acc += performance.now() - t0; frames++;
+    if(frames >= 120){
+      var avg = acc / frames;
+      if(avg > 9){ degraded = true; FX.live = true; FX.level = 'auto-low'; }
+      frames = 0; acc = 0;
+    }
+    requestAnimationFrame(loop);
+  }
+
+  document.addEventListener('pointermove', function(e){
+    var r = cv.getBoundingClientRect();
+    pointer.x = e.clientX - r.left; pointer.y = e.clientY - r.top;
+  }, {passive:true});
+  document.addEventListener('pointerleave', function(){ pointer.x = -9999; });
+
+  var io = new IntersectionObserver(function(en){ visible = en[0].isIntersecting; }, {threshold:0});
+  io.observe(cv);
+
+  window.addEventListener('resize', resize);
+  draw();
+  loop();
+}
+
+/* ============ REVEALS ============ */
+function initReveals(){
+  var els = [].slice.call(document.querySelectorAll('.reveal, .reveal-l, .reveal-img, .wipe'));
+  if(!('IntersectionObserver' in window)){
+    els.forEach(function(el){ el.classList.add('is-in'); });
+    return;
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){ en.target.classList.add('is-in'); io.unobserve(en.target); }
+    });
+  }, {threshold:0.12, rootMargin:'0px 0px -8% 0px'});
+  els.forEach(function(el){ io.observe(el); });
+}
+
+/* ============ NAV STATE ============ */
+function initNav(){
+  var nav = document.getElementById('nav');
+  function onScroll(){
+    if(window.scrollY > 24) nav.classList.add('is-scrolled');
+    else nav.classList.remove('is-scrolled');
+  }
+  onScroll();
+  window.addEventListener('scroll', onScroll, {passive:true});
+}
+
+/* ============ LABS ============ */
+var LABS = [
+  { slug:'magnet-and-compass',         ten:'Nam châm và la bàn',       k:'Từ tính',
+    intro:[
+      'La bàn là một kim nhỏ treo trên trục, tự do xoay và luôn chỉ về hướng Bắc – Nam của từ trường Trái Đất. Kim la bàn về bản chất là một nam châm thanh: cực Nam của la bàn bị hút bởi cực từ phía Bắc (hai cực trái dấu hút nhau) nên kim quay về đúng hướng đó.',
+      'Trong mô phỏng, kéo thanh nam châm lại gần la bàn rồi quan sát kim quay. Bật thêm Trái Đất để thấy Trái Đất cũng hoạt động như một nam châm khổng lồ — cực từ Bắc nằm gần cực địa Nam.'
+    ], },
+
+  { slug:'generator',                  ten:'Máy phát điện',             k:'Cảm ứng điện từ',
+    intro:[
+      'Máy phát điện là một cuộn dây quay trong từ trường, biến cơ học hóa thành điện năng. Quay nhanh hơn thì hiện điện động sinh ra lớn hơn; tăng số vòng dây hay cường độ từ trường cũng làm tăng điện áp.',
+      'Trong mô phỏng, kéo nước hay quay tay để đưa cơ học vào cuộn dây và xem bóng đèn sáng lên thế nào.'
+    ], },
+  { slug:'pendulum-lab',               ten:'Con lắc',                   k:'Cơ học',
+    intro:[
+      'Chu kỳ con lắc đơn T = 2π√(L/g): chỉ phụ thuộc chiều dài dây L và gia tốc trọng trường g, không phụ thuộc khối lượng vật. Dây dài hơn thì chu kỳ lớn hơn, dao động chậm hơn.',
+      'Trong mô phỏng, đổi chiều dài dây rồi đo chu kỳ, sau đó so với giá trị tính từ công thức.'
+    ], },
+  { slug:'buoyancy',                   ten:'Sự nổi',                    k:'Cơ học · Áp suất',
+    intro:[
+      'Vật trong chất lỏng chịu lực đẩy Archimedes bằng trọng lượng lượng chất lỏng bị nó thay chỗ: F = ρ·V·g. Vật nổi khi khối lượng riêng nhỏ hơn chất lỏng, chìm khi lớn hơn, lơ lửng khi bằng nhau.',
+      'Trong mô phỏng, đổi khối lượng, thể tích và loại chất lỏng để xem vật nổi hay chìm.'
+    ], },
+  { slug:'wave-interference',          ten:'Giao thoa sóng',            k:'Sóng',
+    intro:[
+      'Hai nguồn kêu cùng pha tạo vân cực đại (cộng hưởng) ở nơi hiệu đường là số nguyên bội bước sóng λ, và vân triệt tiêu ở nơi hiệu đường là số lẻ bội λ/2.',
+      'Trong mô phỏng, kéo hai nguồn lại gần hoặc xa nhau để thấy hình vân thay đổi rõ nhất ở các khe và tại mặt nước.'
+    ], },
+  { slug:'bending-light',              ten:'Khúc xạ ánh sáng',          k:'Quang học',
+    intro:[
+      'Tia sáng đổi hướng khi đi từ môi trường này sang môi trường khác vì vận tốc truyền khác nhau: n1·sinθ1 = n2·sinθ2 (định luật Snell). Từ chất liệu qua đi đến chất liệu nghèo hơn, tia lệch ra xa pháp tuyến.',
+      'Khi góc tới lớn hơn góc tới hạn, tia không thoát ra nữa mà bị phản xạ toàn phần — nguyên lý của sợi quang học.'
+    ], }
+];
+
+var stageFrame = null, lbFrame = null, currentLab = 0;
+
+function buildFrame(host, lab, onload){
+  var f = document.createElement('iframe');
+  f.loading = 'lazy';
+  f.setAttribute('allow','autoplay; fullscreen; encrypted-media');
+  f.setAttribute('allowfullscreen','');
+  f.title = lab.ten;
+  if(onload) f.addEventListener('load', function(){ f.classList.add('is-in'); onload(); });
+  f.src = 'assets/labs/' + lab.slug + '.html';
+  host.appendChild(f);
+  return f;
+}
+
+function initLabs(){
+  var tabs = document.getElementById('labTabs');
+  var wrap = document.getElementById('frameWrap');
+  var current = document.getElementById('labCurrent');
+  var loading = document.getElementById('frameLoading');
+
+  LABS.forEach(function(l, i){
+    var b = document.createElement('button');
+    b.className = 'lab-tab' + (i === 0 ? ' is-active' : '');
+    b.type = 'button';
+    b.setAttribute('role','tab');
+    b.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+    b.textContent = (i+1) + '. ' + l.ten;
+    b.addEventListener('click', function(){ selectLab(i); });
+    tabs.appendChild(b);
+  });
+
+  function markLoaded(){
+    wrap.classList.add('is-loaded');
+    loading.textContent = 'Tải lại…';
+  }
+
+  function selectLab(i){
+    currentLab = i;
+    var l = LABS[i];
+    [].forEach.call(tabs.children, function(tab, j){
+      tab.classList.toggle('is-active', i === j);
+      tab.setAttribute('aria-selected', i === j ? 'true' : 'false');
+    });
+    current.textContent = (i+1) + '. ' + l.ten;
+    var tagEl = document.getElementById('labTag');
+    var nameEl = document.getElementById('labName');
+    var bodyEl = document.getElementById('labBody');
+    if(tagEl) tagEl.textContent = 'Lab ' + ('0'+(i+1)).slice(-2) + ' \u00b7 ' + l.k;
+    if(nameEl) nameEl.textContent = l.ten;
+    if(bodyEl) bodyEl.innerHTML = l.intro.map(function(t){ return '<p>' + t + '</p>'; }).join('');
+    wrap.classList.remove('is-loaded');
+    loading.textContent = 'Đang tải mô phỏng…';
+    if(stageFrame){
+      stageFrame.classList.remove('is-in');
+      stageFrame.src = 'assets/labs/' + l.slug + '.html';
+    }else{
+      stageFrame = buildFrame(wrap, l, markLoaded);
+    }
+    var lbTitle = document.getElementById('lbTitle');
+    if(lbTitle) lbTitle.textContent = (i+1) + '. ' + l.ten;
+  }
+
+  document.getElementById('expandStage').addEventListener('click', openLightbox);
+  var cta = document.getElementById('ctaExpand');
+  if(cta) cta.addEventListener('click', function(){
+    document.getElementById('phong-thi-nghiem').scrollIntoView({behavior:'smooth'});
+    setTimeout(openLightbox, 450);
+  });
+
+  selectLab(0);
+
+  function openLightbox(){
+    var box = document.getElementById('lightbox');
+    var frameHost = box.querySelector('.lightbox__frame');
+    var lbLoad = document.getElementById('lbLoading');
+    var l = LABS[currentLab];
+    document.getElementById('lbTitle').textContent = (currentLab+1) + '. ' + l.ten;
+    lbLoad.style.display = '';
+    if(lbFrame){
+      lbFrame.src = 'assets/labs/' + l.slug + '.html';
+    }else{
+      lbFrame = document.createElement('iframe');
+      lbFrame.loading = 'lazy';
+      lbFrame.setAttribute('allow','autoplay; fullscreen; encrypted-media');
+      lbFrame.setAttribute('allowfullscreen','');
+      lbFrame.title = l.ten;
+      lbFrame.addEventListener('load', function(){ lbLoad.style.display = 'none'; lbFrame.classList.add('is-in'); });
+      lbFrame.src = 'assets/labs/' + l.slug + '.html';
+      frameHost.appendChild(lbFrame);
+    }
+    box.hidden = false;
+    document.body.style.overflow = 'hidden';
+    requestAnimationFrame(function(){ box.classList.add('is-open'); });
+    box.querySelector('.lightbox__close').focus();
+  }
+  function closeLightbox(){
+    var box = document.getElementById('lightbox');
+    box.classList.remove('is-open');
+    document.body.style.overflow = '';
+    setTimeout(function(){ box.hidden = true; }, 480);
+  }
+  boxCloseBind();
+  function boxCloseBind(){
+    var box = document.getElementById('lightbox');
+    box.addEventListener('click', function(e){
+      if(e.target.closest('[data-lbclose]')) closeLightbox();
+    });
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape' && box.classList.contains('is-open')) closeLightbox();
+    });
+  }
+}
+
+/* ============ HERO PARALLAX (rAF, GPU-only transforms) ============ */
+function initHeroParallax(){
+  var inner = document.getElementById('heroContent');
+  if(!inner || FX.weak) return;
+  var ticking = false;
+  function apply(){
+    var y = window.scrollY || 0;
+    var vh = window.innerHeight || 1;
+    if(y < vh * 1.2){
+      inner.style.transform = 'translate3d(0,' + (y * 0.26).toFixed(1) + 'px,0)';
+      inner.style.opacity = Math.max(0, 1 - y / (vh * 0.8)).toFixed(3);
+      var fcv = document.getElementById('field');
+      if(fcv) fcv.style.transform = 'translate3d(0,' + (y * 0.08).toFixed(1) + 'px,0)';
+    }else{
+      var fcv2 = document.getElementById('field');
+      if(fcv2) fcv2.style.transform = '';
+      inner.style.transform = '';
+      inner.style.opacity = '';
+    }
+    ticking = false;
+  }
+  window.addEventListener('scroll', function(){
+    if(!ticking){ requestAnimationFrame(apply); ticking = true; }
+  }, {passive:true});
+  apply();
+}
+
+/* ============ BOOT ============ */
+function boot(){
+  initNav();
+  initReveals();
+  initHeroField();
+  initHeroParallax();
+  initLabs();
+}
+
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', boot, {once:true});
+}else{
+  boot();
+}
+})();
+</script>
+</body>
+</html>
