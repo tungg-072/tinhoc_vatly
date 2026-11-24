@@ -171,11 +171,6 @@ html{scrollbar-width:none;-ms-overflow-style:none}
 }
 /* ============ FLY LINES (giới thiệu) ============ */
 .fly{position:relative;background:var(--navy-deep);overflow:hidden}
-.fly__bg{
-  position:absolute;inset:-10% 0;z-index:0;opacity:.85;
-  background:url('assets/earth-night.png') center 30%/cover no-repeat;
-  will-change:transform;filter:saturate(1.15) brightness(1.2) contrast(1.05) blur(1.5px);
-}
 .fly::after{
   content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
   background:
@@ -364,7 +359,7 @@ html{scrollbar-width:none;-ms-overflow-style:none}
 
 <!-- ================= SECTION 02 · GIỚI THIỆU ================= -->
 <section class="fly" id="gioi-thieu">
-  <div class="fly__bg" aria-hidden="true"></div>
+  
   <div class="fly__item">
     <div class="fly__pin fly__pin--left"><span class="fly__text">Và sau đây<em>…</em></span></div>
   </div>
@@ -866,11 +861,6 @@ function initFly(){
         t.style.opacity = (a2 * (1 - out2)).toFixed(3);
       }
     });
-    if(bg && !reduced && !FX.weak && sec){
-      var sr = sec.getBoundingClientRect();
-      var sp = Math.min(1, Math.max(0, (vh - sr.top) / (vh + sr.height)));
-      bg.style.transform = 'translate3d(0,' + (sp * 90).toFixed(1) + 'px,0)';
-    }
   }
 
   var tick = false;
@@ -913,23 +903,23 @@ function initVoid(){
     }
 
     // beam: grows across first half
-    var a1 = seg(p, 0.02, 0.34);
+    var a1 = seg(p, 0.01, 0.22);
     if(beam){ beam.style.transform = 'scaleX(' + a1.toFixed(3) + ')'; beam.style.opacity = (a1 * (1 - seg(p, 0.72, 0.9))).toFixed(3); }
     // rings: fade in then breathe open
-    var a2 = seg(p, 0.08, 0.38);
+    var a2 = seg(p, 0.04, 0.22);
     var open = seg(p, 0.42, 0.86);
     if(ring){ ring.style.opacity = (a2 * (1 - seg(p, 0.8, 0.97))).toFixed(3); ring.style.transform = 'scale(' + (0.62 + open * 0.75).toFixed(3) + ')'; }
     if(ring2){ ring2.style.opacity = (a2 * 0.8 * (1 - seg(p, 0.78, 0.95))).toFixed(3); ring2.style.transform = 'scale(' + (0.8 + open * 1.5).toFixed(3) + ')'; }
     // hand: rises then drifts away
-    var hIn = seg(p, 0.1, 0.4);
-    var hOut = seg(p, 0.52, 0.86);
+    var hIn = seg(p, 0.02, 0.22);
+    var hOut = seg(p, 0.5, 0.86);
     if(hand){ hand.style.opacity = (hIn * (1 - hOut)).toFixed(3); hand.style.transform = 'translate3d(0,' + (-hIn * 26 + hOut * 10).toFixed(2) + 'px,0) scale(' + (0.9 + hIn * 0.1).toFixed(3) + ')'; }
     // doors: hold first, then split apart late
     var d = seg(p, 0.58, 0.93);
     if(doorL) doorL.style.transform = 'translate3d(' + (-d * 101).toFixed(2) + '%,0,0)';
     if(doorR) doorR.style.transform = 'translate3d(' + (d * 101).toFixed(2) + '%,0,0)';
     // labels
-    if(label) label.style.opacity = (seg(p, 0.12, 0.3) * (1 - seg(p, 0.6, 0.8))).toFixed(3);
+    if(label) label.style.opacity = (seg(p, 0.06, 0.2) * (1 - seg(p, 0.55, 0.8))).toFixed(3);
     if(hint) hint.style.opacity = (seg(p, 0.05, 0.18) * (1 - seg(p, 0.3, 0.45))).toFixed(3);
     // stage lifts away at the very end so the lab shows clean
     stage.style.opacity = (1 - seg(p, 0.9, 1.0)).toFixed(3);
