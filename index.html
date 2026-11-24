@@ -212,18 +212,22 @@ html{scrollbar-width:none;-ms-overflow-style:none}
   mask-image:radial-gradient(60% 60% at 50% 50%,#000 30%,transparent 78%);
 }
 .void__beam{
-  position:absolute;left:72%;top:-2%;bottom:-2%;width:1px;z-index:3;
-  background:linear-gradient(180deg,transparent,var(--cyan) 16%,var(--cyan) 84%,transparent);
+  position:absolute;left:-2vw;right:-2vw;top:50%;height:1px;z-index:2;
+  background:linear-gradient(90deg,transparent,var(--cyan) 18%,var(--cyan) 82%,transparent);
   box-shadow:0 0 14px 1px rgba(63,224,255,.55);
-  transform:scaleY(0);transform-origin:center;will-change:transform,opacity;
+  transform:scaleX(0);transform-origin:center;will-change:transform,opacity;
+}
+.void__disc{
+  position:absolute;z-index:3;width:calc(min(48vh,74vw) - 4px);aspect-ratio:1;border-radius:50%;
+  background:#000;pointer-events:none;
 }
 .void__ring{
-  position:absolute;z-index:3;width:min(48vh,74vw);aspect-ratio:1;border-radius:50%;
+  position:absolute;z-index:4;width:min(48vh,74vw);aspect-ratio:1;border-radius:50%;
   border:1px solid rgba(63,224,255,.6);
   box-shadow:0 0 40px rgba(63,224,255,.16) inset,0 0 26px rgba(63,224,255,.14);
   opacity:0;will-change:transform,opacity;
 }
-.void__hand{position:absolute;z-index:3;width:min(24vh,40vw);height:auto;opacity:0;will-change:transform,opacity;filter:drop-shadow(0 0 18px rgba(63,224,255,.25))}
+.void__hand{position:absolute;z-index:5;width:min(24vh,40vw);height:auto;margin-left:4%;margin-top:9%;opacity:0;will-change:transform,opacity;filter:drop-shadow(0 0 18px rgba(63,224,255,.25))}
 .void__hand path{fill:none;stroke:var(--cyan);stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
 .void__label{
   position:absolute;z-index:5;left:50%;top:16%;transform:translateX(-50%);
@@ -377,6 +381,7 @@ html{scrollbar-width:none;-ms-overflow-style:none}
   <div class="void__stage" id="voidStage">
     <div class="void__grid" aria-hidden="true"></div>
     <div class="void__beam" id="voidBeam" aria-hidden="true"></div>
+    <div class="void__disc" aria-hidden="true"></div>
     <div class="void__ring void__ring--1" id="voidRing" aria-hidden="true"></div>
     <svg class="void__hand" viewBox="0 0 24 24" aria-hidden="true">
       <path d="M18 11V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2"/>
@@ -901,7 +906,7 @@ function initVoid(){
 
     // beam: grows across first half
     var a1 = (p > 0.001) ? 1 : 0;
-    if(beam){ var bOpen = seg(p, 0.3, 0.62); beam.style.transform = 'scaleY(' + bOpen.toFixed(3) + ')'; beam.style.opacity = (0.9 * bOpen * (1 - seg(p, 0.9, 1.0))).toFixed(3); }
+    if(beam){ var bOpen = seg(p, 0.05, 0.4); beam.style.transform = 'scaleX(' + bOpen.toFixed(3) + ')'; beam.style.opacity = (bOpen * (1 - seg(p, 0.85, 0.98))).toFixed(3); }
     // rings: fade in then breathe open
     var a2 = (p > 0.001) ? 1 : 0;
     var open = seg(p, 0.42, 0.86);
