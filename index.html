@@ -176,6 +176,17 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;text-a
 .reveal-img{clip-path:inset(10% 0 10% 0);opacity:.35;transition:clip-path 1.25s var(--ease-io),opacity .9s var(--ease-out)}
 .reveal-img.is-in{clip-path:inset(0 0 0 0);opacity:1}
 
+/* ============ FOOTER ============ */
+.site-foot{border-top:1px solid var(--line);background:var(--navy-deep)}
+.site-foot__inner{
+  display:flex;flex-wrap:wrap;gap:var(--sp-3) var(--sp-6);
+  justify-content:space-between;align-items:center;
+  padding-block:var(--sp-6);
+  font-family:var(--font-display);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--white-45);
+}
+.site-foot strong{color:var(--white-70);font-weight:500}
+.site-foot .sep{color:var(--cyan-dim)}
+
 /* ============ INTRO (editorial long-form) ============ */
 .intro{position:relative;padding-block:clamp(var(--sp-8),12vw,var(--sp-9))}
 .intro__lead{
@@ -213,8 +224,6 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;text-a
 .const__v{font-family:var(--font-display);font-weight:300;font-size:clamp(22px,2.8vw,34px);letter-spacing:-.02em;line-height:1.1;color:var(--white)}
 .const__v em{font-style:normal;color:var(--cyan)}
 .const__l{margin-top:var(--sp-2);color:var(--white-45);font-size:13px;line-height:1.55}
-.intro__outro{margin-top:clamp(var(--sp-7),7vw,var(--sp-8));display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--sp-5);border-top:1px solid var(--line);padding-top:clamp(var(--sp-6),6vw,var(--sp-8))}
-.intro__outro h3{font-family:var(--font-display);font-weight:300;font-size:clamp(22px,3vw,34px);line-height:1.15;letter-spacing:-.02em;max-width:22ch}
 
 /* ============ LAB ============ */
 .lab-layout{display:grid;grid-template-columns:minmax(280px,360px) 1fr;gap:var(--sp-6);align-items:start}
@@ -391,12 +400,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;text-a
       <div class="const__cell"><div class="const__v">1,602<em>×10⁻¹⁹</em></div><div class="const__l">C — điện tích nguyên tố</div></div>
     </div>
 
-    <div class="intro__outro reveal" style="--d:160ms">
-      <h3>Năm phòng thí nghiệm để tự tay kiểm chứng.</h3>
-      <a class="btn btn--solid" href="#phong-thi-nghiem">Bắt đầu thí nghiệm
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
-      </a>
-    </div>
+    
   </div>
 </section>
 
@@ -438,6 +442,15 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;text-a
 </section>
 
 </main>
+
+<!-- ================= FOOTER ================= -->
+<footer class="site-foot">
+  <div class="wrap site-foot__inner">
+    <span>Nhóm　<strong>Tin học – Vật lý</strong></span>
+    <span>Bài thuyết trình　<span class="sep">·</span>　Chủ đề　<strong>Vật lý</strong></span>
+    <span>Mô phỏng PhET　<span class="sep">·</span>　chạy sẵn trên máy, không cần mạng</span>
+  </div>
+</footer>
 
 <!-- ================= LIGHTBOX ================= -->
 <div class="lightbox" id="lightbox" hidden>
