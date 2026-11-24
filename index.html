@@ -201,7 +201,7 @@ html{scrollbar-width:none;-ms-overflow-style:none}
   position:sticky;top:0;height:100svh;overflow:hidden;background:#000;
   display:grid;place-items:center;isolation:isolate;
 }
-.void__door{position:absolute;top:0;bottom:0;width:50.5%;background:#000;z-index:4;will-change:transform}
+.void__door{position:absolute;top:0;bottom:0;width:50.5%;background:#000;z-index:2;will-change:transform}
 .void__door--l{left:0}
 .void__door--r{right:0}
 .void__grid{
@@ -212,7 +212,7 @@ html{scrollbar-width:none;-ms-overflow-style:none}
   mask-image:radial-gradient(60% 60% at 50% 50%,#000 30%,transparent 78%);
 }
 .void__beam{
-  position:absolute;left:-2vw;right:-2vw;top:27%;height:1px;z-index:2;
+  position:absolute;left:-2vw;right:-2vw;top:27%;height:1px;z-index:3;
   background:linear-gradient(90deg,transparent,var(--cyan) 18%,var(--cyan) 82%,transparent);
   box-shadow:0 0 14px 1px rgba(63,224,255,.55);
   transform:scaleX(0);transform-origin:center;will-change:transform,opacity;
@@ -912,14 +912,14 @@ function initVoid(){
     if(ring2){ ring2.style.opacity = (a2 * 0.8 * (1 - seg(p, 0.78, 0.95))).toFixed(3); ring2.style.transform = 'scale(' + (0.8 + open * 1.5).toFixed(3) + ')'; }
     // hand: rises then drifts away
     var hIn = (p > 0.001) ? 1 : 0;
-    var hOut = seg(p, 0.55, 0.85);
+    var hOut = seg(p, 0.68, 0.95);
     if(hand){ hand.style.opacity = (hIn * (1 - hOut)).toFixed(3); hand.style.transform = 'translate3d(0,' + (-hIn * 26 + hOut * 10).toFixed(2) + 'px,0) scale(' + (0.9 + hIn * 0.1).toFixed(3) + ')'; }
     // doors: hold first, then split apart late
     var d = seg(p, 0.58, 0.93);
     if(doorL) doorL.style.transform = 'translate3d(' + (-d * 101).toFixed(2) + '%,0,0)';
     if(doorR) doorR.style.transform = 'translate3d(' + (d * 101).toFixed(2) + '%,0,0)';
     // labels
-    if(label) label.style.opacity = ((p > 0.001 ? 1 : 0) * (1 - seg(p, 0.55, 0.8))).toFixed(3);
+    if(label) label.style.opacity = ((p > 0.001 ? 1 : 0) * (1 - seg(p, 0.62, 0.88))).toFixed(3);
     if(hint) hint.style.opacity = (seg(p, 0.05, 0.18) * (1 - seg(p, 0.3, 0.45))).toFixed(3);
     // stage lifts away at the very end so the lab shows clean
     stage.style.opacity = (1 - seg(p, 0.9, 1.0)).toFixed(3);
